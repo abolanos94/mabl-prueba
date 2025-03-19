@@ -1,0 +1,46 @@
+name: Mabl Test Execution
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  mabl-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Obtener el código del repositorio
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Instalar Node.js (si tu flujo requiere Node.js)
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+
+      # 3. Instalar Mabl CLI
+      - name: Install Mabl CLI
+        run: |
+          # Descargar e instalar Mabl CLI manualmente
+          echo "Descargando Mabl CLI..."
+          curl -LO https://cli.mabl.com/download/latest/linux/mabl
+          
+          # Hacer que el binario sea ejecutable
+          chmod +x mabl
+          
+          # Mover el binario a un directorio en el PATH
+          sudo mv mabl /usr/local/bin/mabl
+          
+          # Verificar que Mabl está accesible
+          mabl --version
+
+      # 4. Ejecutar los tests en Mabl
+      - name: Run Mabl tests
+        run: |
+          mabl login --api-token ${{ secrets.MABL_API_TOKEN }}
+          mabl test run --environment <ID del entorno> --test <ID del test>
