@@ -17,16 +17,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Instalar Node.js (si tu flujo requiere Node.js)
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '14'
+      # 2. Verificar la conectividad de red
+      - name: Check network connectivity to Mabl
+        run: |
+          ping -c 3 cli.mabl.com || true
+          curl -I https://cli.mabl.com || true
 
-      # 3. Instalar Mabl CLI
+      # 3. Configurar DNS alternativo
+      - name: Set up DNS
+        run: |
+          echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf > /dev/null
+          echo "nameserver 1.1.1.1" | sudo tee -a /etc/resolv.conf > /dev/null
+
+      # 4. Descargar e instalar Mabl CLI manualmente
       - name: Install Mabl CLI
         run: |
-          # Descargar e instalar Mabl CLI manualmente
           echo "Descargando Mabl CLI..."
           curl -LO https://cli.mabl.com/download/latest/linux/mabl
           
@@ -39,7 +44,7 @@ jobs:
           # Verificar que Mabl está accesible
           mabl --version
 
-      # 4. Ejecutar los tests en Mabl
+      # 5. Ejecutar los tests en Mabl
       - name: Run Mabl tests
         run: |
           mabl login --api-token ${{ secrets.MABL_API_TOKEN }}
