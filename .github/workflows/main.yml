@@ -23,18 +23,21 @@ jobs:
         with:
           node-version: '14'
 
-      # 3. Instalar Mabl CLI usando el script de instalación
+      # 3. Instalar Mabl CLI usando snap
       - name: Install Mabl CLI
         run: |
-          # Descargar e instalar Mabl CLI
+          # Instalar Mabl CLI usando snap
           sudo snap install mabl-app --classic
           
+          # Asegurarse de que /snap/bin esté en el PATH
+          export PATH="/snap/bin:$PATH"
+          
           # Verificar que Mabl está accesible
-          mabl --version
+          mabl-app --version
 
       # 4. Ejecutar los tests en Mabl
       - name: Run Mabl tests
         run: |
-          export PATH="$HOME/.mabl/bin:$PATH"
-          mabl login --api-token ${{ secrets.MABL_API_TOKEN }}
-          mabl test run --environment <ID del entorno> --test <ID del test>
+          export PATH="/snap/bin:$PATH"
+          mabl-app login --api-token ${{ secrets.MABL_API_TOKEN }}
+          mabl-app test run --environment <ID del entorno> --test <ID del test>
