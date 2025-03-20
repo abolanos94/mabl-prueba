@@ -17,22 +17,29 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Instalar Node.js (si tu flujo requiere Node.js)
+      # 2. Instalar Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '14'
 
-
-      # 5. Instalar Mabl CLI usando snap
+      # 3. Instalar Mabl CLI usando npm
       - name: Install Mabl CLI
         run: |
-           curl -s https://cli.mabl.com/download/cli/install.sh -o install.sh
-           bash install.sh
+          npm install --save-dev @mablhq/mabl-cli
 
-      # 6. Ejecutar Mabl en modo headless usando xvfb
+      # 4. Autenticación de Mabl CLI usando el token API
+      - name: Authenticate Mabl CLI
+        run: |
+          mabl auth activate-key ${{ secrets.MABL_API_TOKEN }}
+
+      # 5. Esperar que la aplicación esté disponible (si es necesario)
+      - name: Wait for app to start
+        run: |
+          npm start & wait-on http://localhost:3000
+
+      # 6. Ejecutar pruebas Mabl
       - name: Run Mabl tests
         run: |
-          export PATH="/snap/bin:$PATH"
-          xvfb-run mabl-app login --api-token ${{ secrets.MABL_API_TOKEN }}
-          xvfb-run mabl-app test run --environment <ID del entorno> --test <ID del test>
+          mabl tests run --id ${{ secrets.TEST_ID }} --environment-id ${{ secrets.ENVIRONMENT_ID }} --creds ${{ secrets.CREDS_ID }} --headless
+
