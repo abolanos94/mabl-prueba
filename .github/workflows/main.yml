@@ -23,21 +23,21 @@ jobs:
         with:
           node-version: '14'
 
-      # 3. Instalar Mabl CLI usando snap
+      # 3. Instalar dependencias necesarias
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsecret-1-0 xvfb
+
+      # 4. Instalar Mabl CLI usando snap
       - name: Install Mabl CLI
         run: |
-          # Instalar Mabl CLI usando snap
           sudo snap install mabl-app --classic
-          
-          # Asegurarse de que /snap/bin esté en el PATH
           export PATH="/snap/bin:$PATH"
-          
-          # Verificar que Mabl está accesible
-          mabl-app --version
 
-      # 4. Ejecutar los tests en Mabl
+      # 5. Ejecutar Mabl en modo headless usando xvfb
       - name: Run Mabl tests
         run: |
           export PATH="/snap/bin:$PATH"
-          mabl-app login --api-token ${{ secrets.MABL_API_TOKEN }}
-          mabl-app test run --environment <ID del entorno> --test <ID del test>
+          xvfb-run mabl-app login --api-token ${{ secrets.MABL_API_TOKEN }}
+          xvfb-run mabl-app test run --environment <ID del entorno> --test <ID del test>
