@@ -29,9 +29,6 @@ jobs:
           # Descargar e instalar Mabl CLI
           sudo snap install mabl-app --classic
           
-          # Asegurarse de que el binario de Mabl esté en el PATH
-          export PATH="$HOME/.mabl/bin:$PATH"
-          
           # Verificar que Mabl está accesible
           mabl --version
 
