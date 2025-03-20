@@ -27,7 +27,7 @@ jobs:
       - name: Install Mabl CLI
         run: |
           # Descargar e instalar Mabl CLI
-          curl -s https://cli.mabl.com/download/cli/install.sh | bash
+          sudo snap install mabl-app --classic
           
           # Asegurarse de que el binario de Mabl esté en el PATH
           export PATH="$HOME/.mabl/bin:$PATH"
