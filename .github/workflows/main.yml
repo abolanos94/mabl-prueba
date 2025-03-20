@@ -23,23 +23,12 @@ jobs:
         with:
           node-version: '14'
 
-      # 3. Instalar dependencias gráficas y de red
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgtk-3-0 libgdk-pixbuf2.0-0 libsecret-1-0 dbus-x11 xvfb
-
-      # 4. Configurar D-Bus
-      - name: Set up D-Bus
-        run: |
-          sudo service dbus start
-          export $(dbus-launch)
 
       # 5. Instalar Mabl CLI usando snap
       - name: Install Mabl CLI
         run: |
-          sudo snap install mabl-app --classic
-          export PATH="/snap/bin:$PATH"
+           curl -s https://cli.mabl.com/download/cli/install.sh -o install.sh
+           bash install.sh
 
       # 6. Ejecutar Mabl en modo headless usando xvfb
       - name: Run Mabl tests
